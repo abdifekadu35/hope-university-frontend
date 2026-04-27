@@ -1,4 +1,8 @@
+// export const environment = {
+//   production: true,
+//   apiUrl: 'http://localhost:8080/api/v1'  // Change to your production backend URL
+// };
 export const environment = {
   production: true,
-  apiUrl: 'http://localhost:8080/api/v1'  // Change to your production backend URL
+  apiUrl: 'https://hope-university-backend.onrender.com/api/v1'
 };
