@@ -17,7 +17,7 @@ interface LoginResponse {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = environment.apiUrl;
+  private apiUrl = (window as any).__API_URL;
 
   constructor(private http: HttpClient) {}
 
