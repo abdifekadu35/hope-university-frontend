@@ -8,7 +8,9 @@ export class ApiService {
   //private apiUrl = environment.apiUrl;
   private apiUrl = 'https://hope-university-backend.onrender.com/api/v1';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('🔥 API URL =', this.apiUrl);
+  }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('access_token');
