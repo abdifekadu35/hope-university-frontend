@@ -9,6 +9,10 @@
     "test": "ng test"
   },
   "private": true,
+  "engines": {
+    "node": "18.x",
+    "npm": "9.x"
+  },
   "packageManager": "npm@11.9.0",
   "dependencies": {
     "@angular-devkit/build-angular": "^21.2.7",
