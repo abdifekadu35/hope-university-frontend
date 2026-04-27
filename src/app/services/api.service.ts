@@ -5,7 +5,8 @@ import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ApiService {
-  private apiUrl = environment.apiUrl;
+  //private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://hope-university-backend.onrender.com/api/v1';
 
   constructor(private http: HttpClient) {}
 
