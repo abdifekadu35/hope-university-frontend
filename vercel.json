@@ -1,0 +1,4 @@
+{
+  "buildCommand": "ng build --configuration production",
+  "outputDirectory": "dist/hope-university-frontend"
+}
