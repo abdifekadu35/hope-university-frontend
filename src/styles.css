@@ -1,0 +1,145 @@
+/* Remove all margins and padding globally */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+app-root {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ========== Centered popup card ========== */
+.custom-toast-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+.custom-toast {
+  background: #e6e6e6;
+  width: 450px;
+  padding: 60px 25px 35px;
+  border-radius: 20px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.3);
+}
+
+/* Icon circle – visible and well sized */
+.custom-toast .icon {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 38px;
+  font-weight: bold;
+  color: white;
+}
+
+.custom-toast.toast-success .icon {
+  background: #22c55e;
+}
+.custom-toast.toast-success .btn {
+  background: #22c55e;
+}
+
+.custom-toast.toast-error .icon {
+  background: #ef4444;
+}
+.custom-toast.toast-error .btn {
+  background: #ef4444;
+}
+
+.custom-toast h2 {
+  font-size: 26px;
+  margin-top: 10px;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+  color: #1f2437;
+}
+
+.custom-toast p {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.custom-toast .btn {
+  border: none;
+  padding: 10px 25px;
+  border-radius: 40px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.3s;
+}
+.custom-toast .btn:hover {
+  opacity: 0.85;
+}
+
+/* Confirmation popup buttons - ensure visibility */
+.confirm-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.confirm-yes {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.confirm-no {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 25px;
+  border-radius: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.confirm-yes {
+  background: #22c55e !important;
+  color: white !important;
+}
+
+.confirm-no {
+  background: #ef4444 !important;
+  color: white !important;
+}

@@ -1,0 +1,56 @@
+<div class="profile-container" *ngIf="!loading && !error && course">
+  <div class="profile-header">
+    <button class="back-btn" routerLink="/courses">← Back to Courses</button>
+    <h1>Course Profile</h1>
+  </div>
+
+  <div class="profile-layout">
+    <div class="profile-sidebar">
+      <h3>{{ course.code }}</h3>
+      <p class="course-name">{{ course.name }}</p>
+      <div class="sidebar-info">
+        <p><strong>Credits</strong><br>{{ course.credits || '-' }}</p>
+        <p><strong>Department</strong><br>{{ course.departmentName || '-' }}</p>
+        <p><strong>Instructor</strong><br>{{ course.instructorName || '-' }}</p>
+        <p><strong>Enrolled Students</strong><br>{{ course.enrolledStudentsCount || 0 }}</p>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <div class="tabs">
+        <button [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">Course Info</button>
+        <button [class.active]="activeTab === 'students'" (click)="setActiveTab('students')">Enrolled Students</button>
+      </div>
+
+      <div class="tab-content" *ngIf="activeTab === 'info'">
+        <div class="info-grid">
+          <div class="info-card full-width">
+            <h3>Course Details</h3>
+            <div class="info-row"><span>Code:</span> {{ course.code }}</div>
+            <div class="info-row"><span>Name:</span> {{ course.name }}</div>
+            <div class="info-row"><span>Description:</span> {{ course.description || '-' }}</div>
+            <div class="info-row"><span>Credits:</span> {{ course.credits || '-' }}</div>
+            <div class="info-row"><span>Department:</span> {{ course.departmentName || '-' }}</div>
+            <div class="info-row"><span>Instructor:</span> {{ course.instructorName || '-' }}</div>
+            <div class="info-row"><span>Enrolled Students:</span> {{ course.enrolledStudentsCount || 0 }}</div>
+            <div class="info-row"><span>Created:</span> {{ course.createdAt | date }}</div>
+            <div class="info-row"><span>Last Updated:</span> {{ course.updatedAt | date }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-content" *ngIf="activeTab === 'students'">
+        <p class="placeholder">List of enrolled students will be shown here (coming soon).</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Loading course...</p>
+</div>
+<div *ngIf="error" class="error-container">
+  <p>{{ error }}</p>
+  <button routerLink="/courses">Back to Courses</button>
+</div>

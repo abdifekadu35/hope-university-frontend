@@ -1,0 +1,120 @@
+<div class="enrollment-management">
+  <div class="header">
+    <h1>Enrollment Management</h1>
+    <div>
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Cancel' : '+ Enroll Student' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Registration Form -->
+  <div class="form-container" *ngIf="showForm">
+    <div class="form-card">
+      <h2>Enroll Student</h2>
+      <div *ngIf="modalError" class="error-message">{{ modalError }}</div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Student <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newEnrollment.studentId">
+            <option [ngValue]="null">-- Select Student --</option>
+            <option *ngFor="let s of students" [ngValue]="s.id">{{ s.fullName }} ({{ s.studentId }})</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['studentId']">{{ fieldErrors['studentId'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Course <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newEnrollment.courseId">
+            <option [ngValue]="null">-- Select Course --</option>
+            <option *ngFor="let c of courses" [ngValue]="c.id">{{ c.code }} - {{ c.name }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['courseId']">{{ fieldErrors['courseId'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn-save" (click)="addEnrollment()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Enroll' }}
+        </button>
+        <button class="btn-cancel" type="button" (click)="toggleForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search by student name, email, course code, name, status..." class="search-input" />
+    <button *ngIf="searchTerm" class="btn-clear" (click)="searchTerm = ''">✖ Clear</button>
+    <div class="export-buttons">
+      <button class="btn-export-excel" (click)="exportToExcel()">📊 Export to Excel</button>
+      <button class="btn-export-pdf" (click)="exportToPDF()">📄 Export to PDF</button>
+    </div>
+  </div>
+
+  <!-- Error message with retry button -->
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="retryLoad()">Retry</button>
+  </div>
+
+  <!-- Enrollment Table -->
+  <div class="table-container">
+    <table class="enrollment-table">
+      <thead>
+      <tr>
+        <th>Student</th>
+        <th>Email</th>
+        <th>Course Code</th>
+        <th>Course Name</th>
+        <th>Status</th>
+        <th>Enrollment Date</th>
+        <th>Grade</th>
+        <th>Letter Grade</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let e of filteredEnrollments">
+        <td>{{ e.studentName }}</td>
+        <td>{{ e.studentEmail }}</td>
+        <td>{{ e.courseCode }}</td>
+        <td>{{ e.courseName }}</td>
+        <td><span class="status-badge" [class]="getStatusClass(e.status)">{{ e.status || '-' }}</span></td>
+        <td>{{ e.enrollmentDate | date }}</td>
+        <td>{{ e.grade !== null ? e.grade : '-' }}</td>
+        <td>{{ e.letterGrade || '-' }}</td>
+        <td (click)="$event.stopPropagation()">
+          <button class="btn-delete" (click)="deleteEnrollment(e.id)">Drop</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredEnrollments.length === 0">
+        <td colspan="9">No enrollments match your search.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Success/Error Popup -->
+<div class="custom-toast-overlay" *ngIf="showNotification">
+  <div class="custom-toast" [class.toast-success]="notificationType === 'success'" [class.toast-error]="notificationType === 'error'">
+    <div class="icon">{{ notificationType === 'success' ? '✓' : '✕' }}</div>
+    <h2>{{ notificationType === 'success' ? 'SUCCESS' : 'ERROR' }}</h2>
+    <p>{{ notificationMessage }}</p>
+    <button class="btn" (click)="closeNotification()">{{ notificationType === 'success' ? 'CONTINUE' : 'TRY AGAIN' }}</button>
+  </div>
+</div>
+
+<!-- Confirmation Popup -->
+<div class="custom-toast-overlay" *ngIf="showConfirmPopup">
+  <div class="custom-toast">
+    <div class="icon warning">?</div>
+    <h2>CONFIRMATION</h2>
+    <p>{{ confirmMessage }}</p>
+    <div class="confirm-buttons">
+      <button class="btn confirm-yes" (click)="closeConfirmPopup(true)">YES</button>
+      <button class="btn confirm-no" (click)="closeConfirmPopup(false)">NO</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,88 @@
+<div class="dashboard-modern">
+  <!-- Header with greeting -->
+  <div class="dashboard-header">
+    <h1>Dashboard</h1>
+    <p>Welcome back, {{ userEmail }}</p>
+  </div>
+
+  <!-- Stats Cards Row 1 -->
+  <div class="cards-grid">
+    <div class="stat-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+      <div class="card-icon">👨‍🎓</div>
+      <div class="card-details">
+        <h3>Students</h3>
+        <p>{{ stats.totalStudents }}</p>
+      </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+      <div class="card-icon">👩‍🏫</div>
+      <div class="card-details">
+        <h3>Teachers</h3>
+        <p>{{ stats.totalInstructors }}</p>
+      </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+      <div class="card-icon">📚</div>
+      <div class="card-details">
+        <h3>Courses</h3>
+        <p>{{ stats.totalCourses }}</p>
+      </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+      <div class="card-icon">💰</div>
+      <div class="card-details">
+        <h3>Revenue</h3>
+        <p>{{ stats.totalRevenueCollected | currency }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards Row 2 -->
+  <div class="cards-grid">
+    <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+      <div class="card-icon">📖</div>
+      <div class="card-details">
+        <h3>Books</h3>
+        <p>{{ stats.totalBooks }}</p>
+      </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%);">
+      <div class="card-icon">📝</div>
+      <div class="card-details">
+        <h3>Enrollments</h3>
+        <p>{{ stats.activeEnrollments }}</p>
+      </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+      <div class="card-icon">✅</div>
+      <div class="card-details">
+        <h3>Present (30d)</h3>
+        <p>{{ stats.attendancePresentLast30Days }}</p>
+      </div>
+    </div>
+    <div class="stat-card" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);">
+      <div class="card-icon">❌</div>
+      <div class="card-details">
+        <h3>Absent (30d)</h3>
+        <p>{{ stats.attendanceAbsentLast30Days }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Analytics Section (Chart + Quick Insights) -->
+  <div class="analytics-section">
+    <div class="chart-container">
+      <h3>Attendance Summary (Last 30 Days)</h3>
+      <canvas id="attendanceChart" width="400" height="200"></canvas>
+    </div>
+    <div class="insights">
+      <h3>Quick Insights</h3>
+      <ul>
+        <li>📈 Enrollments: {{ stats.activeEnrollments }}</li>
+        <li>📚 Total Books in Library: {{ stats.totalBooks }}</li>
+        <li>💰 Revenue collected: {{ stats.totalRevenueCollected | currency }}</li>
+        <li>✅ Present rate: {{ stats.attendancePresentLast30Days + stats.attendanceAbsentLast30Days > 0 ? (stats.attendancePresentLast30Days / (stats.attendancePresentLast30Days + stats.attendanceAbsentLast30Days) * 100).toFixed(1) : 0 }}%</li>
+      </ul>
+    </div>
+  </div>
+</div>

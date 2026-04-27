@@ -1,0 +1,138 @@
+<div class="attendance-management">
+  <div class="header">
+    <h1>Attendance Management</h1>
+    <div>
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Cancel' : '+ Mark Attendance' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Mark Attendance Form -->
+  <div class="form-container" *ngIf="showForm">
+    <div class="form-card">
+      <h2>Mark Attendance</h2>
+      <div *ngIf="modalError" class="error-message">{{ modalError }}</div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Student <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newAttendance.studentId">
+            <option [ngValue]="null">-- Select Student --</option>
+            <option *ngFor="let s of students" [ngValue]="s.id">{{ s.fullName }} ({{ s.studentId }})</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['studentId']">{{ fieldErrors['studentId'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Class Session <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newAttendance.classSessionId">
+            <option [ngValue]="null">-- Select Class Session --</option>
+            <option *ngFor="let cs of classSessions" [ngValue]="cs.id">{{ cs.courseCode }} - {{ cs.courseName }} ({{ cs.date }} {{ cs.timeSlot }})</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['classSessionId']">{{ fieldErrors['classSessionId'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Status <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newAttendance.status">
+            <option *ngFor="let opt of statusOptions" [value]="opt">{{ opt }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['status']">{{ fieldErrors['status'] }}</div>
+        </div>
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" [(ngModel)]="newAttendance.date">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Remarks</label>
+          <textarea [(ngModel)]="newAttendance.remarks" rows="2"></textarea>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn-save" (click)="addAttendance()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : 'Mark Attendance' }}
+        </button>
+        <button class="btn-cancel" type="button" (click)="toggleForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search by student name, email, course code, name, status..." class="search-input" />
+    <button *ngIf="searchTerm" class="btn-clear" (click)="searchTerm = ''">✖ Clear</button>
+    <div class="export-buttons">
+      <button class="btn-export-excel" (click)="exportToExcel()">📊 Export to Excel</button>
+      <button class="btn-export-pdf" (click)="exportToPDF()">📄 Export to PDF</button>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="retryLoad()">Retry</button>
+  </div>
+
+  <!-- Attendance Table -->
+  <div class="table-container">
+    <table class="attendance-table">
+      <thead>
+      <tr>
+        <th>Student</th>
+        <th>Email</th>
+        <th>Course</th>
+        <th>Session</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Remarks</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let a of filteredAttendances">
+        <td>{{ a.studentName }}</td>
+        <td>{{ a.studentEmail }}</td>
+        <td>{{ a.courseCode }} - {{ a.courseName }}</td>
+        <td>{{ a.classSessionId }}</td>
+        <td><span class="status-badge" [class]="getStatusClass(a.status)">{{ a.status }}</span></td>
+        <td>{{ a.date | date }}</td>
+        <td>{{ a.remarks || '-' }}</td>
+        <td (click)="$event.stopPropagation()">
+          <button class="btn-delete" (click)="deleteAttendance(a.id)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredAttendances.length === 0">
+        <td colspan="8">No attendance records match your search.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Popups -->
+<div class="custom-toast-overlay" *ngIf="showNotification">
+  <div class="custom-toast" [class.toast-success]="notificationType === 'success'" [class.toast-error]="notificationType === 'error'">
+    <div class="icon">{{ notificationType === 'success' ? '✓' : '✕' }}</div>
+    <h2>{{ notificationType === 'success' ? 'SUCCESS' : 'ERROR' }}</h2>
+    <p>{{ notificationMessage }}</p>
+    <button class="btn" (click)="closeNotification()">{{ notificationType === 'success' ? 'CONTINUE' : 'TRY AGAIN' }}</button>
+  </div>
+</div>
+
+<div class="custom-toast-overlay" *ngIf="showConfirmPopup">
+  <div class="custom-toast">
+    <div class="icon warning">?</div>
+    <h2>CONFIRMATION</h2>
+    <p>{{ confirmMessage }}</p>
+    <div class="confirm-buttons">
+      <button class="btn confirm-yes" (click)="closeConfirmPopup(true)">YES</button>
+      <button class="btn confirm-no" (click)="closeConfirmPopup(false)">NO</button>
+    </div>
+  </div>
+</div>

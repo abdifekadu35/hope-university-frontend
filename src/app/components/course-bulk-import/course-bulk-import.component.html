@@ -1,0 +1,23 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Bulk Import Courses</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <p>Upload an Excel (.xlsx) or CSV file with the following columns:</p>
+      <ul>
+        <li>code, name, description (optional), credits (optional), departmentId (optional), instructorId (optional)</li>
+      </ul>
+      <input type="file" (change)="onFileSelected($event)" accept=".xlsx,.csv,.xls">
+      <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+      <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeModal()">Cancel</button>
+      <button class="btn-save" (click)="upload()" [disabled]="uploading">
+        {{ uploading ? 'Uploading...' : 'Upload' }}
+      </button>
+    </div>
+  </div>
+</div>

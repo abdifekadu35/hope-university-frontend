@@ -1,0 +1,194 @@
+<div class="profile-container" *ngIf="!loading && !error && student">
+  <!-- Back button -->
+  <div class="profile-header">
+    <button class="back-btn" routerLink="/students">← Back to Students</button>
+    <h1>Student Profile</h1>
+  </div>
+
+  <div class="profile-layout">
+    <!-- Left sidebar -->
+    <div class="profile-sidebar">
+      <div class="profile-photo">
+        <img [src]="student.profilePictureUrl || 'https://i.pravatar.cc/150'" alt="Profile photo">
+      </div>
+      <h3>{{ student.firstName }} {{ student.fatherName }} {{ student.lastName }}</h3>
+      <p class="student-id">ID: {{ student.studentId }}</p>
+      <p class="student-email">{{ student.email }}</p>
+      <div class="sidebar-info">
+        <p><strong>Department</strong><br>{{ student.departmentName || '-' }}</p>
+        <p><strong>Enrollment Year</strong><br>{{ student.enrollmentYear || '-' }}</p>
+        <p><strong>Academic Status</strong><br>{{ student.academicStatus || '-' }}</p>
+      </div>
+    </div>
+
+    <!-- Right content with tabs -->
+    <div class="profile-content">
+      <div class="tabs">
+        <button [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">Profile Info</button>
+        <button class="btn-id-card" (click)="openIdCardModal()">🪪 ID Card</button>
+<!--        <//button (click)="testCapture()">🧪 Test Image</button>-->
+        <button [class.active]="activeTab === 'documents'" (click)="setActiveTab('documents')">Documents</button>
+        <button [class.active]="activeTab === 'financial'" (click)="setActiveTab('financial')">Financial</button>
+        <button [class.active]="activeTab === 'attendance'" (click)="setActiveTab('attendance')">Attendance</button>
+      </div>
+
+      <!-- Tab: Profile Info -->
+      <div class="tab-content" *ngIf="activeTab === 'info'">
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>Identity</h3>
+            <div class="info-row"><span>National ID:</span> {{ student.nationalId || '-' }}</div>
+            <div class="info-row"><span>Place of Birth:</span> {{ student.placeOfBirth || '-' }}</div>
+            <div class="info-row"><span>Gender:</span> {{ student.gender || '-' }}</div>
+            <div class="info-row"><span>Date of Birth:</span> {{ student.dateOfBirth | date }}</div>
+          </div>
+          <div class="info-card">
+            <h3>Contact</h3>
+            <div class="info-row"><span>Phone:</span> {{ student.phone || '-' }}</div>
+            <div class="info-row"><span>Current Address:</span> {{ student.currentAddress || '-' }}</div>
+            <div class="info-row"><span>Country:</span> {{ student.country || '-' }}</div>
+            <div class="info-row"><span>City:</span> {{ student.city || '-' }}</div>
+            <div class="info-row"><span>Postal Code:</span> {{ student.postalCode || '-' }}</div>
+          </div>
+          <div class="info-card">
+            <h3>Academic</h3>
+            <div class="info-row"><span>Faculty:</span> {{ student.faculty || '-' }}</div>
+            <div class="info-row"><span>Program:</span> {{ student.program || '-' }}</div>
+            <div class="info-row"><span>Mode of Study:</span> {{ student.modeOfStudy || '-' }}</div>
+            <div class="info-row"><span>Academic Status:</span> {{ student.academicStatus || '-' }}</div>
+          </div>
+          <div class="info-card">
+            <h3>Guardian</h3>
+            <div class="info-row"><span>Full Name:</span> {{ student.guardianFullName || '-' }}</div>
+            <div class="info-row"><span>Relationship:</span> {{ student.guardianRelationship || '-' }}</div>
+            <div class="info-row"><span>Phone:</span> {{ student.guardianPhone || '-' }}</div>
+            <div class="info-row"><span>Email:</span> {{ student.guardianEmail || '-' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab: Documents (corrected table syntax) -->
+      <div class="tab-content" *ngIf="activeTab === 'documents'">
+        <div class="upload-section">
+          <h3>Upload New Document</h3>
+          <div class="upload-form">
+            <input type="file" (change)="onFileSelected($event)" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.txt,.xlsx">
+            <select [(ngModel)]="documentType" class="doc-type-select">
+              <option value="">-- Select document type --</option>
+              <option value="Certificate">Certificate</option>
+              <option value="Grade Report">Grade Report</option>
+              <option value="ID Card">ID Card</option>
+              <option value="Transcript">Transcript</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="text" [(ngModel)]="documentDescription" placeholder="Additional description (optional)" class="desc-input">
+            <button (click)="uploadDocument()" [disabled]="uploading" class="btn-upload">Upload</button>
+          </div>
+          <div *ngIf="uploadMessage" class="success-msg">{{ uploadMessage }}</div>
+          <div *ngIf="uploadError" class="error-msg">{{ uploadError }}</div>
+        </div>
+
+        <div class="documents-list">
+          <h3>Student Documents</h3>
+          <div *ngIf="documents.length === 0" class="no-data">No documents uploaded yet.</div>
+          <table class="doc-table" *ngIf="documents.length > 0">
+            <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Document Type</th>
+              <th>Size</th>
+              <th>Uploaded</th>
+              <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let doc of documents">
+              <td>{{ doc.fileName }}</td>
+              <td>{{ doc.description || '-' }}</td>
+              <td>{{ (doc.fileSize / 1024).toFixed(1) }} KB</td>
+              <td>{{ doc.createdAt | date:'short' }}</td>
+              <td>
+                <button (click)="viewDocument(doc)" class="btn-view">View</button>
+                <button (click)="downloadDocument(doc)" class="btn-download">Download</button>
+                <button (click)="deleteDocument(doc)" class="btn-delete">Delete</button>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Financial (placeholder) -->
+      <div class="tab-content" *ngIf="activeTab === 'financial'">
+        <p class="placeholder">Financial summary will be displayed here.</p>
+      </div>
+
+      <!-- Tab: Attendance (placeholder) -->
+      <div class="tab-content" *ngIf="activeTab === 'attendance'">
+        <p class="placeholder">Attendance records will be displayed here.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading and error states -->
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Loading profile...</p>
+</div>
+<div *ngIf="error" class="error-container">
+  <p>{{ error }}</p>
+  <button routerLink="/students">Back to Students</button>
+</div>
+
+<!-- Hidden ID card template for image capture -->
+<div id="id-card-template" style="display: none; width: 700px; height: 420px; background: #f8fafc; border-radius: 18px; overflow: hidden; font-family: 'Segoe UI', sans-serif;">
+  <div style="height: 8px; background: linear-gradient(to right, #078930 33%, #fcdd09 33%, #fcdd09 66%, #da121a 66%);"></div>
+
+  <div style="padding: 15px 20px; display: flex; align-items: center; justify-content: space-between;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <div style="width: 45px; height: 45px; border-radius: 50%; background: #2563eb; display: flex; align-items: center; justify-content: center; color: white; font-size: 20px;">ID</div>
+      <div>
+        <h2 style="font-size: 16px; margin:0;">FEDERAL DIGITAL ID</h2>
+        <p style="font-size: 11px; margin:0; color: gray;">National Identity Registry</p>
+      </div>
+    </div>
+    <small style="font-size: 9px;">{{ student?.studentId }}</small>
+  </div>
+
+  <div style="display: flex; padding: 20px;">
+    <img [src]="student?.profilePictureUrl || 'https://i.pravatar.cc/150'" style="width: 150px; border-radius: 10px;">
+    <div style="margin-left: 25px; flex: 1;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div><div style="font-size: 11px; color: gray;">FULL NAME</div><div style="font-weight: bold; font-size: 15px;">{{ student?.firstName }} {{ student?.fatherName }} {{ student?.lastName }}</div></div>
+        <div><div style="font-size: 11px; color: gray;">SEX</div><div style="font-weight: bold; font-size: 15px;">{{ student?.gender || '-' }}</div></div>
+        <div><div style="font-size: 11px; color: gray;">DATE OF BIRTH</div><div style="font-weight: bold; font-size: 15px;">{{ student?.dateOfBirth | date }}</div></div>
+        <div><div style="font-size: 11px; color: gray;">NATIONALITY</div><div style="font-weight: bold; font-size: 15px;">ETHIOPIAN</div></div>
+        <div><div style="font-size: 11px; color: gray;">ID NUMBER</div><div style="font-weight: bold; font-size: 15px;">{{ student?.studentId }}</div></div>
+        <div><div style="font-size: 11px; color: gray;">ISSUE DATE</div><div style="font-weight: bold; font-size: 15px;">{{ today }}</div></div>
+      </div>
+    </div>
+  </div>
+  <div style="position: absolute; bottom: 15px; left: 20px; right: 20px; background: #e5e7eb; padding: 10px; border-radius: 10px; font-size: 12px; text-align: center;">OFFICIAL GOVERNMENT IDENTIFICATION</div>
+</div>
+
+<!-- ID Card Modal (image) -->
+<div class="modal-overlay" *ngIf="showIdCardModal" (click)="closeIdCardModal()">
+  <div class="modal-content id-card-modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Student ID Card</h2>
+      <span class="close" (click)="closeIdCardModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <div *ngIf="renderingCard" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Generating ID card image...</p>
+      </div>
+      <img *ngIf="frontCardImage" [src]="frontCardImage" alt="ID Card" class="id-card-image">
+    </div>
+    <div class="modal-footer">
+      <button class="btn-download" (click)="downloadIdCard()">Download PDF</button>
+      <button class="btn-cancel" (click)="closeIdCardModal()">Close</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+/* Reuse student profile styles. You can copy from student-profile.component.css */
+.profile-container {
+  padding: 24px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+.back-btn {
+  background: #e0e0e0;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.profile-layout {
+  display: flex;
+  gap: 24px;
+}
+.profile-sidebar {
+  width: 280px;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.profile-sidebar h3 {
+  margin: 16px 0 4px;
+  font-size: 20px;
+}
+.sidebar-info p {
+  margin: 12px 0;
+  text-align: left;
+}
+.profile-content {
+  flex: 1;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+}
+.tabs {
+  display: flex;
+  gap: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 20px;
+}
+.tabs button {
+  background: none;
+  border: none;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+}
+.tabs button.active {
+  color: #4f7d9c;
+  border-bottom: 2px solid #4f7d9c;
+}
+.info-grid {
+  display: grid;
+  gap: 20px;
+}
+.info-card {
+  background: #f9f9f9;
+  padding: 16px;
+  border-radius: 8px;
+}
+.info-card.full-width {
+  grid-column: 1 / -1;
+}
+.info-card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+.info-row {
+  margin-bottom: 8px;
+}
+.info-row span:first-child {
+  font-weight: 600;
+  width: 120px;
+  display: inline-block;
+}
+.loading-container, .error-container {
+  text-align: center;
+  padding: 40px;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top-color: #4f7d9c;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.placeholder {
+  text-align: center;
+  color: #999;
+  padding: 40px;
+}

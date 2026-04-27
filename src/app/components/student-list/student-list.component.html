@@ -1,0 +1,296 @@
+<div class="student-management">
+  <div class="header">
+    <h1>Student Management</h1>
+    <div>
+      <button class="btn-primary" (click)="openBulkImport()" style="margin-right: 10px;">📁 Bulk Import</button>
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Cancel' : '+ Register New Student' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Registration Form -->
+  <div class="form-container" *ngIf="showForm">
+    <div class="form-card">
+      <h2>{{ isEditing ? 'Edit Student' : 'Register New Student' }}</h2>
+      <div *ngIf="modalError" class="error-message">{{ modalError }}</div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>First Name <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.firstName" maxlength="50">
+          <div class="field-error" *ngIf="fieldErrors['firstName']">{{ fieldErrors['firstName'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Father Name <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.fatherName" maxlength="50">
+          <div class="field-error" *ngIf="fieldErrors['fatherName']">{{ fieldErrors['fatherName'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Last Name <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.lastName" maxlength="50">
+          <div class="field-error" *ngIf="fieldErrors['lastName']">{{ fieldErrors['lastName'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Email <span class="asterisk">*</span></label>
+          <input type="email" [(ngModel)]="newStudent.email" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Department <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newStudent.departmentId">
+            <option [ngValue]="null" disabled selected>-- Select Department --</option>
+            <option *ngFor="let dept of departments" [ngValue]="dept.id">{{ dept.name }} ({{ dept.code }})</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['departmentId']">{{ fieldErrors['departmentId'] }}</div>
+        </div>
+      </div>
+
+      <h3 class="section-header">Student Identity</h3>
+      <div class="form-row">
+        <div class="form-group">
+          <label>National ID</label>
+          <input type="text" [(ngModel)]="newStudent.nationalId" maxlength="50">
+        </div>
+        <div class="form-group required">
+          <label>Place of Birth <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.placeOfBirth" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['placeOfBirth']">{{ fieldErrors['placeOfBirth'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Gender <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newStudent.gender">
+            <option value="">Select</option>
+            <option *ngFor="let g of genders" [value]="g">{{ g }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['gender']">{{ fieldErrors['gender'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-group required">
+        <label>Date of Birth <span class="asterisk">*</span></label>
+        <input type="date" [(ngModel)]="newStudent.dateOfBirth">
+        <div class="field-error" *ngIf="fieldErrors['dateOfBirth']">{{ fieldErrors['dateOfBirth'] }}</div>
+      </div>
+
+      <h3 class="section-header">Address Details</h3>
+      <div class="form-group required">
+        <label>Current Address <span class="asterisk">*</span></label>
+        <input type="text" [(ngModel)]="newStudent.currentAddress" maxlength="255">
+        <div class="field-error" *ngIf="fieldErrors['currentAddress']">{{ fieldErrors['currentAddress'] }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Country <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.country" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['country']">{{ fieldErrors['country'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>City <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.city" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['city']">{{ fieldErrors['city'] }}</div>
+        </div>
+        <div class="form-group">
+          <label>Postal Code</label>
+          <input type="text" [(ngModel)]="newStudent.postalCode" maxlength="20">
+        </div>
+      </div>
+
+      <h3 class="section-header">Academic Profile</h3>
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Faculty <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newStudent.faculty">
+            <option value="">Select Faculty</option>
+            <option *ngFor="let f of faculties" [value]="f">{{ f }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['faculty']">{{ fieldErrors['faculty'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Program <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.program" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['program']">{{ fieldErrors['program'] }}</div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Mode of Study <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newStudent.modeOfStudy">
+            <option value="">Select</option>
+            <option *ngFor="let m of modesOfStudy" [value]="m">{{ m }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['modeOfStudy']">{{ fieldErrors['modeOfStudy'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Academic Status <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newStudent.academicStatus">
+            <option value="">Select</option>
+            <option *ngFor="let s of academicStatuses" [value]="s">{{ s }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['academicStatus']">{{ fieldErrors['academicStatus'] }}</div>
+        </div>
+      </div>
+
+      <h3 class="section-header">Guardian / Emergency Contact</h3>
+      <div class="form-group required">
+        <label>Guardian Full Name <span class="asterisk">*</span></label>
+        <input type="text" [(ngModel)]="newStudent.guardianFullName" maxlength="100">
+        <div class="field-error" *ngIf="fieldErrors['guardianFullName']">{{ fieldErrors['guardianFullName'] }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Relationship <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.guardianRelationship" maxlength="50">
+          <div class="field-error" *ngIf="fieldErrors['guardianRelationship']">{{ fieldErrors['guardianRelationship'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Guardian Phone <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newStudent.guardianPhone" maxlength="20">
+          <div class="field-error" *ngIf="fieldErrors['guardianPhone']">{{ fieldErrors['guardianPhone'] }}</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Guardian Email</label>
+        <input type="email" [(ngModel)]="newStudent.guardianEmail" maxlength="100">
+      </div>
+
+      <!-- Student Phone (with country code) and Enrollment Year -->
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Student Phone <span class="asterisk">*</span></label>
+          <div class="phone-input-group">
+            <select [(ngModel)]="selectedCountryCode" class="country-code-select">
+              <option *ngFor="let c of countryCodes" [value]="c.code">{{ c.code }} ({{ c.name }})</option>
+            </select>
+            <input type="text" [(ngModel)]="localPhoneNumber" placeholder="Phone number" class="phone-number-input" maxlength="15">
+          </div>
+          <div class="field-error" *ngIf="fieldErrors['phone']">{{ fieldErrors['phone'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Enrollment Year <span class="asterisk">*</span></label>
+          <input type="number" [(ngModel)]="newStudent.enrollmentYear">
+          <div class="field-error" *ngIf="fieldErrors['enrollmentYear']">{{ fieldErrors['enrollmentYear'] }}</div>
+        </div>
+      </div>
+
+      <!-- Photo Upload -->
+      <div class="form-group">
+        <label>Profile Photo</label>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*">
+        <div *ngIf="newStudent.profilePictureUrl" class="photo-preview">
+          <img [src]="newStudent.profilePictureUrl" width="80">
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : (isEditing ? 'Update' : 'Save') }}
+        </button>
+        <button class="btn-cancel" type="button" (click)="toggleForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search bar (always visible) -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="searchTerm = $event" placeholder="🔍 Search by name, ID, email, department, phone, address..." class="search-input" />
+    <button *ngIf="searchTerm" class="btn-clear" (click)="searchTerm = ''">✖ Clear</button>
+    <div class="export-buttons">
+      <button class="btn-export-excel" (click)="exportToExcel()">📊 Export to Excel</button>
+      <button class="btn-export-pdf" (click)="exportToPDF()">📄 Export to PDF</button>
+    </div>
+  </div>
+
+  <!-- Loading spinner -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <p>Loading students...</p>
+  </div>
+
+  <!-- Error message with retry button -->
+  <div *ngIf="error && !loading" class="error-container">
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="retryLoad()">Retry</button>
+  </div>
+
+  <!-- Student Table (shown when not loading and no error) -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="student-table">
+      <thead>
+      <tr>
+        <th>ID</th><th>Full Name</th><th>Email</th><th>National ID</th><th>Place of Birth</th><th>Gender</th><th>DOB</th>
+        <th>Current Address</th><th>Country</th><th>City</th><th>Postal Code</th>
+        <th>Faculty</th><th>Program</th><th>Mode</th><th>Status</th>
+        <th>Guardian Name</th><th>Relationship</th><th>Guardian Phone</th><th>Guardian Email</th>
+        <th>Student Phone</th><th>Enrollment Year</th><th>Photo</th><th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let s of filteredStudents" (click)="viewStudent(s.id)" style="cursor: pointer;">
+        <td>{{ s.studentId }}</td>
+        <td>{{ s.firstName }} {{ s.fatherName }} {{ s.lastName }}</td>
+        <td>{{ s.email }}</td>
+        <td>{{ s.nationalId || '-' }}</td>
+        <td>{{ s.placeOfBirth || '-' }}</td>
+        <td>{{ s.gender || '-' }}</td>
+        <td>{{ s.dateOfBirth ? (s.dateOfBirth | date) : '-' }}</td>
+        <td>{{ s.currentAddress || '-' }}</td>
+        <td>{{ s.country || '-' }}</td>
+        <td>{{ s.city || '-' }}</td>
+        <td>{{ s.postalCode || '-' }}</td>
+        <td>{{ s.faculty || '-' }}</td>
+        <td>{{ s.program || '-' }}</td>
+        <td>{{ s.modeOfStudy || '-' }}</td>
+        <td>{{ s.academicStatus || '-' }}</td>
+        <td>{{ s.guardianFullName || '-' }}</td>
+        <td>{{ s.guardianRelationship || '-' }}</td>
+        <td>{{ s.guardianPhone || '-' }}</td>
+        <td>{{ s.guardianEmail || '-' }}</td>
+        <td>{{ s.phone || '-' }}</td>
+        <td>{{ s.enrollmentYear || '-' }}</td>
+        <td><img *ngIf="s.profilePictureUrl" [src]="s.profilePictureUrl" width="40" height="40" style="border-radius:50%"><span *ngIf="!s.profilePictureUrl">-</span></td>
+        <td (click)="$event.stopPropagation()">
+          <button class="btn-view" [routerLink]="['/students', s.id]" (click)="$event.stopPropagation()">View</button>
+          <button class="btn-edit" (click)="editStudent(s); $event.stopPropagation()">Edit</button>
+          <button class="btn-delete" (click)="deleteStudent(s.id); $event.stopPropagation()">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredStudents.length === 0">
+        <td colspan="23">No students match your search. </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Success/Error Popup -->
+<div class="custom-toast-overlay" *ngIf="showNotification">
+  <div class="custom-toast" [class.toast-success]="notificationType === 'success'" [class.toast-error]="notificationType === 'error'">
+    <div class="icon">{{ notificationType === 'success' ? '✓' : '✕' }}</div>
+    <h2>{{ notificationType === 'success' ? 'SUCCESS' : 'ERROR' }}</h2>
+    <p>{{ notificationMessage }}</p>
+    <button class="btn" (click)="closeNotification()">{{ notificationType === 'success' ? 'CONTINUE' : 'TRY AGAIN' }}</button>
+  </div>
+</div>
+
+<!-- Bulk Import Modal Component -->
+<app-bulk-import *ngIf="showBulkImport"
+                 (close)="showBulkImport = false"
+                 (importComplete)="onBulkImportComplete($event)">
+</app-bulk-import>
+
+<!-- Confirmation Popup -->
+<div class="custom-toast-overlay" *ngIf="showConfirmPopup">
+  <div class="custom-toast">
+    <div class="icon warning">?</div>
+    <h2>CONFIRMATION</h2>
+    <p>{{ confirmMessage }}</p>
+    <div class="confirm-buttons">
+      <button class="btn confirm-yes" (click)="closeConfirmPopup(true)">YES</button>
+      <button class="btn confirm-no" (click)="closeConfirmPopup(false)">NO</button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,177 @@
+.session-management {
+  padding: 24px;
+  background: #f5f6fa;
+  min-height: 100vh;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.header h1 {
+  font-size: 24px;
+  color: #2c3e50;
+  margin: 0;
+}
+.btn-primary {
+  background: #4f7d9c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.form-container {
+  margin-bottom: 24px;
+}
+.form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.form-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.form-group {
+  flex: 1;
+}
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.asterisk {
+  color: #dc3545;
+}
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+.form-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.btn-save, .btn-cancel {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.btn-save {
+  background: #4f7d9c;
+  color: white;
+}
+.btn-cancel {
+  background: #e0e0e0;
+}
+.search-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin: 20px 0;
+}
+.search-input {
+  padding: 8px 12px;
+  width: 250px;
+  border-radius: 20px;
+  border: 1px solid #ddd;
+}
+.export-buttons {
+  display: flex;
+  gap: 8px;
+}
+.btn-export-excel, .btn-export-pdf {
+  background: #4f7d9c;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+}
+.session-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.session-table th, .session-table td {
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+}
+.session-table th {
+  background: #f8f9fa;
+}
+.session-table tbody tr:nth-child(even) {
+  background-color: #fafafa;
+}
+.session-table tbody tr:hover {
+  background-color: #f0f0f0;
+}
+.btn-edit, .btn-delete {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 5px;
+}
+.btn-edit {
+  background: #2196f3;
+  color: white;
+}
+.btn-delete {
+  background: #dc3545;
+  color: white;
+}
+.error-container {
+  text-align: center;
+  padding: 40px;
+}
+.error-message {
+  background: #fee2e2;
+  color: #dc2626;
+  padding: 8px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+.field-error {
+  color: #dc3545;
+  font-size: 12px;
+}
+.custom-toast-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.custom-toast {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  min-width: 300px;
+}
+.confirm-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 15px;
+}
+.confirm-yes { background: #dc3545; color: white; }
+.confirm-no { background: #6c757d; color: white; }

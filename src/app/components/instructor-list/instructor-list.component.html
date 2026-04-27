@@ -1,0 +1,169 @@
+<div class="instructor-management">
+  <div class="header">
+    <h1>Instructor Management</h1>
+    <div>
+      <!-- ADDED: Bulk Import button -->
+      <button class="btn-primary" (click)="openBulkImport()" style="margin-right: 10px;">📁 Bulk Import</button>
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Cancel' : '+ Register New Instructor' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Registration Form -->
+  <div class="form-container" *ngIf="showForm">
+    <div class="form-card">
+      <h2>{{ isEditing ? 'Edit Instructor' : 'Register New Instructor' }}</h2>
+      <div *ngIf="modalError" class="error-message">{{ modalError }}</div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Full Name <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newInstructor.fullName" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['fullName']">{{ fieldErrors['fullName'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Email <span class="asterisk">*</span></label>
+          <input type="email" [(ngModel)]="newInstructor.email" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['email']">{{ fieldErrors['email'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required" *ngIf="!isEditing">
+          <label>Password <span class="asterisk">*</span></label>
+          <input type="password" [(ngModel)]="newInstructor.password" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['password']">{{ fieldErrors['password'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Department <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newInstructor.departmentId">
+            <option [ngValue]="null" disabled selected>-- Select Department --</option>
+            <option *ngFor="let dept of departments" [ngValue]="dept.id">{{ dept.name }} ({{ dept.code }})</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['departmentId']">{{ fieldErrors['departmentId'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Title <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newInstructor.title">
+            <option value="">-- Select Title --</option>
+            <option *ngFor="let t of titles" [value]="t">{{ t }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['title']">{{ fieldErrors['title'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Office <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newInstructor.office" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['office']">{{ fieldErrors['office'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Phone <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newInstructor.phone" maxlength="20">
+          <div class="field-error" *ngIf="fieldErrors['phone']">{{ fieldErrors['phone'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Hire Date <span class="asterisk">*</span></label>
+          <input type="date" [(ngModel)]="newInstructor.hireDate">
+          <div class="field-error" *ngIf="fieldErrors['hireDate']">{{ fieldErrors['hireDate'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : (isEditing ? 'Update' : 'Save') }}
+        </button>
+        <button class="btn-cancel" type="button" (click)="toggleForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search by name, ID, email, department, office, phone..." class="search-input" />
+    <button *ngIf="searchTerm" class="btn-clear" (click)="searchTerm = ''">✖ Clear</button>
+    <div class="export-buttons">
+      <button class="btn-export-excel" (click)="exportToExcel()">📊 Export to Excel</button>
+      <button class="btn-export-pdf" (click)="exportToPDF()">📄 Export to PDF</button>
+    </div>
+  </div>
+
+  <!-- Error message with retry button -->
+  <div *ngIf="error && !loading" class="error-container">
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="retryLoad()">Retry</button>
+  </div>
+
+  <!-- Instructor Table -->
+  <div *ngIf="!loading && !error" class="table-container">
+    <table class="instructor-table">
+      <thead>
+      <tr>
+        <th>Instructor ID</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Office</th>
+        <th>Phone</th>
+        <th>Hire Date</th>
+        <th>Title</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let i of filteredInstructors" (click)="viewInstructor(i.id)" style="cursor: pointer;">
+        <td>{{ i.instructorId }}</td>
+        <td>{{ i.fullName }}</td>
+        <td>{{ i.email }}</td>
+        <td>{{ i.departmentName }}</td>
+        <td>{{ i.office }}</td>
+        <td>{{ i.phone }}</td>
+        <td>{{ i.hireDate | date }}</td>
+        <td>{{ i.title }}</td>
+        <td (click)="$event.stopPropagation()">
+          <button class="btn-view" [routerLink]="['/instructors', i.id]" (click)="$event.stopPropagation()">View</button>
+          <button class="btn-edit" (click)="editInstructor(i); $event.stopPropagation()">Edit</button>
+          <button class="btn-delete" (click)="deleteInstructor(i.id); $event.stopPropagation()">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredInstructors.length === 0">
+        <td colspan="9">No instructors match your search.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Success/Error Popup -->
+<div class="custom-toast-overlay" *ngIf="showNotification">
+  <div class="custom-toast" [class.toast-success]="notificationType === 'success'" [class.toast-error]="notificationType === 'error'">
+    <div class="icon">{{ notificationType === 'success' ? '✓' : '✕' }}</div>
+    <h2>{{ notificationType === 'success' ? 'SUCCESS' : 'ERROR' }}</h2>
+    <p>{{ notificationMessage }}</p>
+    <button class="btn" (click)="closeNotification()">{{ notificationType === 'success' ? 'CONTINUE' : 'TRY AGAIN' }}</button>
+  </div>
+</div>
+
+<!-- Confirmation Popup -->
+<div class="custom-toast-overlay" *ngIf="showConfirmPopup">
+  <div class="custom-toast">
+    <div class="icon warning">?</div>
+    <h2>CONFIRMATION</h2>
+    <p>{{ confirmMessage }}</p>
+    <div class="confirm-buttons">
+      <button class="btn confirm-yes" (click)="closeConfirmPopup(true)">YES</button>
+      <button class="btn confirm-no" (click)="closeConfirmPopup(false)">NO</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADDED: Bulk Import Modal -->
+<app-instructor-bulk-import *ngIf="showBulkImport"
+                            (close)="showBulkImport = false"
+                            (importComplete)="onBulkImportComplete($event)">
+</app-instructor-bulk-import>

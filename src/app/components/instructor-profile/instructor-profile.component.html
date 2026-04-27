@@ -1,0 +1,57 @@
+<div class="profile-container" *ngIf="!loading && !error && instructor">
+  <div class="profile-header">
+    <button class="back-btn" routerLink="/teachers">← Back to Instructors</button>
+    <h1>Instructor Profile</h1>
+  </div>
+
+  <div class="profile-layout">
+    <div class="profile-sidebar">
+      <div class="profile-photo">
+        <img [src]="'https://i.pravatar.cc/150'" alt="Profile photo">
+      </div>
+      <h3>{{ instructor.fullName }}</h3>
+      <p class="instructor-id">ID: {{ instructor.instructorId }}</p>
+      <p class="instructor-email">{{ instructor.email }}</p>
+      <div class="sidebar-info">
+        <p><strong>Department</strong><br>{{ instructor.departmentName || '-' }}</p>
+        <p><strong>Office</strong><br>{{ instructor.office || '-' }}</p>
+        <p><strong>Title</strong><br>{{ instructor.title || '-' }}</p>
+        <p><strong>Hire Date</strong><br>{{ instructor.hireDate | date }}</p>
+      </div>
+    </div>
+
+    <div class="profile-content">
+      <div class="tabs">
+        <button [class.active]="activeTab === 'info'" (click)="setActiveTab('info')">Profile Info</button>
+      </div>
+
+      <div class="tab-content" *ngIf="activeTab === 'info'">
+        <div class="info-grid">
+          <div class="info-card">
+            <h3>Personal Information</h3>
+            <div class="info-row"><span>Full Name:</span> {{ instructor.fullName }}</div>
+            <div class="info-row"><span>Email:</span> {{ instructor.email }}</div>
+            <div class="info-row"><span>Phone:</span> {{ instructor.phone || '-' }}</div>
+            <div class="info-row"><span>Title:</span> {{ instructor.title || '-' }}</div>
+          </div>
+          <div class="info-card">
+            <h3>Professional Information</h3>
+            <div class="info-row"><span>Instructor ID:</span> {{ instructor.instructorId }}</div>
+            <div class="info-row"><span>Department:</span> {{ instructor.departmentName }}</div>
+            <div class="info-row"><span>Office:</span> {{ instructor.office || '-' }}</div>
+            <div class="info-row"><span>Hire Date:</span> {{ instructor.hireDate | date }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="loading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Loading profile...</p>
+</div>
+<div *ngIf="error" class="error-container">
+  <p>{{ error }}</p>
+  <button routerLink="/teachers">Back to Instructors</button>
+</div>

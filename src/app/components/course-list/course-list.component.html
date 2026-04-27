@@ -1,0 +1,142 @@
+<div class="course-management">
+  <div class="header">
+    <h1>Course Management</h1>
+    <div>
+      <button class="btn-primary" (click)="openBulkImport()" style="margin-right: 10px;">📁 Bulk Import</button>
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Cancel' : '+ Register New Course' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Registration Form (code field removed – auto-generated) -->
+  <div class="form-container" *ngIf="showForm">
+    <div class="form-card">
+      <h2>{{ isEditing ? 'Edit Course' : 'Register New Course' }}</h2>
+      <div *ngIf="modalError" class="error-message">{{ modalError }}</div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Course Name <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newCourse.name" maxlength="100">
+          <div class="field-error" *ngIf="fieldErrors['name']">{{ fieldErrors['name'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Description</label>
+          <textarea [(ngModel)]="newCourse.description" rows="3" maxlength="500"></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Credits</label>
+          <input type="number" [(ngModel)]="newCourse.credits" min="0" step="1">
+        </div>
+        <div class="form-group">
+          <label>Department</label>
+          <select [(ngModel)]="newCourse.departmentId">
+            <option [ngValue]="null">-- Select Department --</option>
+            <option *ngFor="let dept of departments" [ngValue]="dept.id">{{ dept.name }} ({{ dept.code }})</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Instructor</label>
+          <select [(ngModel)]="newCourse.instructorId">
+            <option [ngValue]="null">-- Select Instructor --</option>
+            <option *ngFor="let inst of instructors" [ngValue]="inst.id">{{ inst.fullName }} ({{ inst.instructorId }})</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : (isEditing ? 'Update' : 'Save') }}
+        </button>
+        <button class="btn-cancel" type="button" (click)="toggleForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search by code, name, department, instructor..." class="search-input" />
+    <button *ngIf="searchTerm" class="btn-clear" (click)="searchTerm = ''">✖ Clear</button>
+    <div class="export-buttons">
+      <button class="btn-export-excel" (click)="exportToExcel()">📊 Export to Excel</button>
+      <button class="btn-export-pdf" (click)="exportToPDF()">📄 Export to PDF</button>
+    </div>
+  </div>
+
+  <!-- Error message with retry button -->
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="retryLoad()">Retry</button>
+  </div>
+
+  <!-- Course Table -->
+  <div class="table-container">
+    <table class="course-table">
+      <thead>
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Credits</th>
+        <th>Department</th>
+        <th>Instructor</th>
+        <th>Enrolled</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let c of filteredCourses" (click)="viewCourse(c.id)" style="cursor: pointer;">
+        <td>{{ c.code }}</td>
+        <td>{{ c.name }}</td>
+        <td>{{ c.credits || '-' }}</td>
+        <td>{{ c.departmentName || '-' }}</td>
+        <td>{{ c.instructorName || '-' }}</td>
+        <td>{{ c.enrolledStudentsCount || 0 }}</td>
+        <td (click)="$event.stopPropagation()">
+          <button class="btn-view" [routerLink]="['/courses', c.id]" (click)="$event.stopPropagation()">View</button>
+          <button class="btn-edit" (click)="editCourse(c); $event.stopPropagation()">Edit</button>
+          <button class="btn-delete" (click)="deleteCourse(c.id); $event.stopPropagation()">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredCourses.length === 0">
+        <td colspan="7">No courses match your search.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Success/Error Popup -->
+<div class="custom-toast-overlay" *ngIf="showNotification">
+  <div class="custom-toast" [class.toast-success]="notificationType === 'success'" [class.toast-error]="notificationType === 'error'">
+    <div class="icon">{{ notificationType === 'success' ? '✓' : '✕' }}</div>
+    <h2>{{ notificationType === 'success' ? 'SUCCESS' : 'ERROR' }}</h2>
+    <p>{{ notificationMessage }}</p>
+    <button class="btn" (click)="closeNotification()">{{ notificationType === 'success' ? 'CONTINUE' : 'TRY AGAIN' }}</button>
+  </div>
+</div>
+
+<!-- Confirmation Popup -->
+<div class="custom-toast-overlay" *ngIf="showConfirmPopup">
+  <div class="custom-toast">
+    <div class="icon warning">?</div>
+    <h2>CONFIRMATION</h2>
+    <p>{{ confirmMessage }}</p>
+    <div class="confirm-buttons">
+      <button class="btn confirm-yes" (click)="closeConfirmPopup(true)">YES</button>
+      <button class="btn confirm-no" (click)="closeConfirmPopup(false)">NO</button>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Import Modal -->
+<app-course-bulk-import *ngIf="showBulkImport"
+                        (close)="showBulkImport = false"
+                        (importComplete)="onBulkImportComplete($event)">
+</app-course-bulk-import>

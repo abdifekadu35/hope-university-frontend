@@ -1,0 +1,141 @@
+<div class="session-management">
+  <div class="header">
+    <h1>Class Session Management</h1>
+    <div>
+      <button class="btn-primary" (click)="toggleForm()">
+        {{ showForm ? 'Cancel' : '+ Add Class Session' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Form -->
+  <div class="form-container" *ngIf="showForm">
+    <div class="form-card">
+      <h2>{{ isEditing ? 'Edit Class Session' : 'Add New Class Session' }}</h2>
+      <div *ngIf="modalError" class="error-message">{{ modalError }}</div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Course <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newSession.courseId">
+            <option [ngValue]="null">-- Select Course --</option>
+            <option *ngFor="let c of courses" [ngValue]="c.id">{{ c.code }} - {{ c.name }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['courseId']">{{ fieldErrors['courseId'] }}</div>
+        </div>
+        <div class="form-group required">
+          <label>Instructor <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newSession.instructorId">
+            <option [ngValue]="null">-- Select Instructor --</option>
+            <option *ngFor="let i of instructors" [ngValue]="i.id">{{ i.fullName }} ({{ i.instructorId }})</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['instructorId']">{{ fieldErrors['instructorId'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Room</label>
+          <select [(ngModel)]="newSession.roomId">
+            <option [ngValue]="null">-- Select Room --</option>
+            <option *ngFor="let r of rooms" [ngValue]="r.id">{{ r.roomNumber }}</option>
+          </select>
+        </div>
+        <div class="form-group required">
+          <label>Time Slot <span class="asterisk">*</span></label>
+          <select [(ngModel)]="newSession.timeSlotId">
+            <option [ngValue]="null">-- Select Time Slot --</option>
+            <option *ngFor="let ts of timeSlots" [ngValue]="ts.id">{{ ts.dayOfWeek }} {{ ts.startTime }} - {{ ts.endTime }}</option>
+          </select>
+          <div class="field-error" *ngIf="fieldErrors['timeSlotId']">{{ fieldErrors['timeSlotId'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group required">
+          <label>Semester <span class="asterisk">*</span></label>
+          <input type="text" [(ngModel)]="newSession.semester" placeholder="e.g., Spring 2025">
+          <div class="field-error" *ngIf="fieldErrors['semester']">{{ fieldErrors['semester'] }}</div>
+        </div>
+      </div>
+
+      <div class="form-buttons">
+        <button class="btn-save" (click)="onSubmit()" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Saving...' : (isEditing ? 'Update' : 'Save') }}
+        </button>
+        <button class="btn-cancel" type="button" (click)="toggleForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" [(ngModel)]="searchTerm" placeholder="🔍 Search by course, instructor, room, semester..." class="search-input" />
+    <button *ngIf="searchTerm" class="btn-clear" (click)="searchTerm = ''">✖ Clear</button>
+    <div class="export-buttons">
+      <button class="btn-export-excel" (click)="exportToExcel()">📊 Export to Excel</button>
+      <button class="btn-export-pdf" (click)="exportToPDF()">📄 Export to PDF</button>
+    </div>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error" class="error-container">
+    <p>{{ error }}</p>
+    <button class="btn-retry" (click)="retryLoad()">Retry</button>
+  </div>
+
+  <!-- Sessions Table -->
+  <div class="table-container">
+    <table class="session-table">
+      <thead>
+      <tr>
+        <th>Course</th>
+        <th>Instructor</th>
+        <th>Room</th>
+        <th>Time Slot</th>
+        <th>Semester</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let s of filteredSessions">
+        <td>{{ s.courseCode }} - {{ s.courseName }}</td>
+        <td>{{ s.instructorName }}</td>
+        <td>{{ s.roomNumber || '-' }}</td>
+        <td>{{ s.startTime }} - {{ s.endTime }}</td>
+        <td>{{ s.semester }}</td>
+        <td (click)="$event.stopPropagation()">
+          <button class="btn-edit" (click)="editSession(s)">Edit</button>
+          <button class="btn-delete" (click)="deleteSession(s.id)">Delete</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredSessions.length === 0">
+        <td colspan="6">No class sessions found.</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Success/Error Popup -->
+<div class="custom-toast-overlay" *ngIf="showNotification">
+  <div class="custom-toast" [class.toast-success]="notificationType === 'success'" [class.toast-error]="notificationType === 'error'">
+    <div class="icon">{{ notificationType === 'success' ? '✓' : '✕' }}</div>
+    <h2>{{ notificationType === 'success' ? 'SUCCESS' : 'ERROR' }}</h2>
+    <p>{{ notificationMessage }}</p>
+    <button class="btn" (click)="closeNotification()">{{ notificationType === 'success' ? 'CONTINUE' : 'TRY AGAIN' }}</button>
+  </div>
+</div>
+
+<!-- Confirmation Popup -->
+<div class="custom-toast-overlay" *ngIf="showConfirmPopup">
+  <div class="custom-toast">
+    <div class="icon warning">?</div>
+    <h2>CONFIRMATION</h2>
+    <p>{{ confirmMessage }}</p>
+    <div class="confirm-buttons">
+      <button class="btn confirm-yes" (click)="closeConfirmPopup(true)">YES</button>
+      <button class="btn confirm-no" (click)="closeConfirmPopup(false)">NO</button>
+    </div>
+  </div>
+</div>
